@@ -83,3 +83,28 @@ func (controller *TaskController) GetTaskByID (context *gin.Context) {
 
 	context.JSON(http.StatusOK, task)
 }
+
+// controller untuk update berdasarkan id
+func (controller *TaskController) UpdateTask(context *gin.Context) {
+	idString := context.Param("id") // ambil id dari url
+
+	id, err := strconv.Atoi(idString) // convert ke string
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Id harus berupa angka!"})
+		return
+	}
+
+	var task model.Task
+	if err := context.ShouldBindJSON(&task); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Data JSON tidak valid!"})
+		return
+	}
+
+	updateTask, err := controller.taskRepository.Update(id, task)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": err.Error() })
+		return
+	}
+
+	context.JSON(http.StatusOK, updateTask)
+}

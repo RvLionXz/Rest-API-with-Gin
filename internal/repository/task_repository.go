@@ -91,7 +91,32 @@ func (repository *TaskRepository) FindByID(id int) (model.Task, error) {
 	if err != nil {
 		return task, err
 	}
-	
 	return task, nil
+}
+
+// update method
+func (repository *TaskRepository) Update (id int, task model.Task) (model.Task, error) {
+	sqlStatement := `UPDATE tasks SET title = ?, description = ?, status = ? WHERE id = ?`
+
+	result, err := repository.db.Exec(sqlStatement, task.Title, task.Description, task.Status, id)
+	if err != nil {
+		return task, err
+	}
+
+	rowsAffected, err := result.RowsAffected() // Cek baris apakah ada baris yg benar di update
+	if err != nil {
+		return task, nil
+	}
+	if rowsAffected == 0 {
+		// jika tidak ada maka id tidak ditemukan
+		return task, fmt.Errorf("task dengan id %d tidak ditemukan untuk di-update", id)
+	}
+
+	// ambil data yg sudah di update dari database menggunakan FindByID
+	updateTask, err := repository.FindByID(id)
+	if err != nil {
+		return task, err
+	}
+	return updateTask, nil
 
 }

@@ -31,6 +31,8 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	routerEngine.DELETE("tasks/:id", taskController.DeleteTask)
 	// Rute untuk ambil task berdasarkan ID
 	routerEngine.GET("tasks/:id", taskController.GetTaskByID)
+	// Rute untuk update task berdasarkan ID
+	routerEngine.PUT("/tasks/:id", taskController.UpdateTask)
 
 	return routerEngine
 }
