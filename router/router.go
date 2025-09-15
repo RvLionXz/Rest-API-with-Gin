@@ -29,6 +29,8 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	routerEngine.GET("/tasks", taskController.FindAll)
 	// Rute untuk hapus Tasks berdasarkan ID
 	routerEngine.DELETE("tasks/:id", taskController.DeleteTask)
+	// Rute untuk ambil task berdasarkan ID
+	routerEngine.GET("tasks/:id", taskController.GetTaskByID)
 
 	return routerEngine
 }

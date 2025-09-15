@@ -19,7 +19,7 @@ func NewTaskController(repo *repository.TaskRepository) *TaskController {
 	return &TaskController{taskRepository: repo}
 }
 
-// `h` menjadi `controller` dan `c` menjadi `context`
+// controller untuk membuat task
 func (controller *TaskController) CreateTask(context *gin.Context) {
 	var task model.Task
 
@@ -37,6 +37,7 @@ func (controller *TaskController) CreateTask(context *gin.Context) {
 	context.JSON(http.StatusCreated, savedTask)
 }
 
+// controler untuk mencari semua tasks
 func (controller *TaskController) FindAll(context *gin.Context) {
 	tasks, err := controller.taskRepository.FindAll()
 
@@ -47,6 +48,7 @@ func (controller *TaskController) FindAll(context *gin.Context) {
 	context.JSON(http.StatusCreated, tasks)
 }
 
+// controller untuk menghapus task berdasarkan id
 func (controller *TaskController) DeleteTask (context *gin.Context) {
 	idString := context.Param("id")
 
@@ -61,4 +63,23 @@ func (controller *TaskController) DeleteTask (context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Task berhasil dihapus"})
+}
+
+// controller untuk mencari task berdasarkan id
+func (controller *TaskController) GetTaskByID (context *gin.Context) {
+	idString := context.Param("id")
+
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "ID harus berupa angka!"})
+		return
+	}
+
+	task, err := controller.taskRepository.FindByID(id)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "Task tidak ditemukan"})
+		return
+	}
+
+	context.JSON(http.StatusOK, task)
 }

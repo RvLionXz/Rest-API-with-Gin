@@ -78,3 +78,20 @@ func (repository *TaskRepository) DeleteByID (id int) error {
 
 	return nil
 }
+
+// search by ID
+func (repository *TaskRepository) FindByID(id int) (model.Task, error) {
+	var task model.Task // variabel penampung
+
+	sqlStatement := `SELECT id, tittle, description, status, created_at, updated_at FROM tasks WHERE id= ?`
+
+	row := repository.db.QueryRow(sqlStatement, id) // gunakan queryrow karena untuk mengembalikan satu objek "row"
+	
+	err := row.Scan(&task.ID, &task.Title, &task.Description, &task.Status, &task.CreatedAt, &task.UpdatedAt)
+	if err != nil {
+		return task, err
+	}
+	
+	return task, nil
+
+}
